@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
@@ -40,6 +41,17 @@ public class MyController {
         return new ResponseEntity<>("IPADDRESS:"+ipAddress, HttpStatus.OK);
     }
 
+    @RequestMapping(method = RequestMethod.GET, value = "/health", produces = "application/json")
+    public ResponseEntity<String> sleep() {
+        try{    
+            Thread.sleep(5000);
+        }catch(Exception e){
+
+        }
+        
+        return new ResponseEntity<>("Awesome!", HttpStatus.OK);
+    }
+
     @RequestMapping(method = RequestMethod.GET, value = "/health-print-all", produces = "application/json")
     public ResponseEntity<String> getALL(HttpServletRequest request) {
 
@@ -64,5 +76,37 @@ public class MyController {
         return new ResponseEntity<>(all, HttpStatus.OK);
     }
 
+
+    @RequestMapping(method = RequestMethod.POST, value = "/posttest", produces = "application/json")
+    public ResponseEntity<String> posttest(HttpServletRequest request,
+                                           @RequestParam(value = "RelayState", defaultValue = "relaystate") String relaystate,
+                                           @RequestParam(value = "SAMLResponse", defaultValue = "info") String samlresponse) {
+
+        Utils.logInfo("called ");
+        Map<String, String> result = new HashMap<>();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("relay "+ relaystate + "\n");
+        sb.append("samlresponse " + samlresponse + "\n");
+
+        Enumeration headerNames = request.getHeaderNames();
+        while (headerNames.hasMoreElements()) {
+            String key = (String) headerNames.nextElement();
+            String value = request.getHeader(key);
+            result.put(key, value);
+        }
+
+        for (Map.Entry<String, String> entry : result.entrySet()) {
+            sb.append(entry+"\n");
+        }
+
+
+
+        String all = sb.toString();
+
+        Utils.logInfo(all);
+
+        return new ResponseEntity<>(all, HttpStatus.OK);
+    }
 
 }
