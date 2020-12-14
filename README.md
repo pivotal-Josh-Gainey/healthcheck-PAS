@@ -4,7 +4,7 @@ Simple application to simulate random failed health checks.
 
 The end point is /health-random-fail
 
-It generates a random number between 0-4 and if it is 3 it will return a 401, all others return a 200.
+It generates a random number between 0-4 and if it is 3 it will return a 404, all others return a 200.
 
 Two other endpoints are:
 
